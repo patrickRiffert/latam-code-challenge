@@ -1,4 +1,23 @@
 from typing import List, Tuple
+from collections import Counter
+
+import ujson
+import emoji
+
 
 def q2_time(file_path: str) -> List[Tuple[str, int]]:
-    pass
+    emoji_counter = Counter()
+    with open(file_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            tweet = ujson.loads(line)
+            for emoji_dict in emoji.emoji_list(tweet['content']):
+                emoji_counter[emoji_dict['emoji']] += 1
+    return emoji_counter.most_common(10)
+
+
+
+if __name__ == "__main__":
+    file_path = '../data/farmers-protest-tweets-2021-2-4.json'
+    from memory_profiler import profile
+    q2_time = profile(q2_time)
+    print(q2_time(file_path))
